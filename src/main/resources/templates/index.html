@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>기술 블로그 모음</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'LINESeedKR-Bd';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    body {
+      font-family: 'LINESeedKR-Bd';
+    }
+
+    .blog-title {
+      font-weight: 500;
+    }
+    .blog-meta {
+      font-size: 0.9rem;
+      color: #777;
+    }
+    .blog-row:hover {
+      background-color: #f8f9fa;
+      transition: 0.2s ease;
+    }
+    .source-button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .sticky-sidebar {
+      position: sticky;
+      top: 80px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<nav class="navbar navbar-light bg-white shadow-sm mb-4">
+  <div class="container d-flex justify-content-between">
+    <a class="navbar-brand fw-bold text-primary" href="#">
+      <span style="color: #6366F1;"></span> 기술 블로그 모음
+    </a>
+    <!-- <button class="btn btn-primary">SignIn</button> -->
+  </div>
+</nav>
+
+<!-- 메인 콘텐츠 -->
+<div class="container">
+  <div class="row">
+
+    <!-- 블로그 리스트 (좌측) -->
+    <div class="col-md-9">
+      <!-- 블로그 항목 -->
+      <div class="border-bottom py-3 blog-row">
+        <div class="blog-title">검색 Indexing 파이프라인 개선기</div>
+        <div class="blog-meta">🥕 당근마켓 · 7시간 전 · 👁 26</div>
+      </div>
+
+      <div class="border-bottom py-3 blog-row">
+        <div class="blog-title">Meta Llama 4 토크나이저 분석</div>
+        <div class="blog-meta">📘 데브션 · 3분 전 · 👁 28</div>
+      </div>
+
+      <div class="border-bottom py-3 blog-row">
+        <div class="blog-title">XSS Filter를 통한 웹 보안 강화 방법</div>
+        <div class="blog-meta">☁️ 베스핀글로벌 · 13시간 전 · 👁 37</div>
+      </div>
+
+      <div class="border-bottom py-3 blog-row">
+        <div class="blog-title">sLLM, Gemma 파인튜닝 예</div>
+        <div class="blog-meta">☁️ 베스핀글로벌 · 4일 전 · 👁 72</div>
+      </div>
+
+      <!-- 페이지네이션 -->
+      <nav class="mt-4 d-flex justify-content-center">
+        <ul class="pagination">
+          <li class="page-item disabled"><a class="page-link">이전</a></li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">다음</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- 출처 버튼 모음 (우측) -->
+    <div class="col-md-3">
+      <div class="sticky-sidebar">
+        <h6 class="fw-bold mb-3">🔍 출처별 보기</h6>
+        <a href="#" class="btn btn-warning source-button">🥕 당근마켓</a>
+        <a href="#" class="btn btn-info text-white source-button">📘 데브션</a>
+        <a href="#" class="btn btn-secondary source-button">☁️ 베스핀글로벌</a>
+        <a href="#" class="btn btn-success source-button">🟢 네이버</a>
+        <a href="#" class="btn btn-dark source-button">🟡 카카오</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
