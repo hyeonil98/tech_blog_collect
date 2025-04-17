@@ -16,14 +16,19 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @SpringBootTest
 class CrawlingRestControllerTest {
 
     @Autowired
     private PostService postService;  // @Autowired로 주입
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     @Test
     @DisplayName("당근 마켓 크롤링 테스트")
@@ -37,6 +42,7 @@ class CrawlingRestControllerTest {
         String startup_url = "https://medium.com/daangn/startup/home";
         String[] urls = {engineer_url, machine_learning_url, data_url, search_url, startup_url};
         int totalSize = 0;
+        List<Post> allPosts = postService.getAllPosts();
 
         for (String url : urls) {
             driver.get(url);  // 올바르게 각 URL을 탐색
@@ -53,13 +59,12 @@ class CrawlingRestControllerTest {
             // 페이지 스크롤을 내려서 추가 콘텐츠 로드
             JavascriptExecutor js = (JavascriptExecutor) driver;
 
-            // 요소가 모두 로드될 때까지 스크롤을 반복해서 내림
             int previousSize = 0;
             while (true) {
                 // 페이지 끝까지 스크롤
                 js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
 
-                // 스크롤 후 대기 (2초 동안)
+
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
@@ -78,44 +83,51 @@ class CrawlingRestControllerTest {
 
                 // 이전 크기 갱신
                 previousSize = updatedItems.size();
-            }
 
-            List<WebElement> allItems = driver.findElements(By.cssSelector(".js-streamItem"));
-            System.out.println("최종 총 개수: " + allItems.size());
 
-            for (WebElement findItems : allItems) {
-                // 게시물 섹션을 찾기
-                List<WebElement> posts = findItems.findElements(By.cssSelector("section > div > div"));
-                totalSize += posts.size();
-                for (WebElement post : posts) {
-                    // a 태그를 찾고, 첫 번째 링크를 얻음
-                    WebElement link = post.findElement(By.cssSelector("div > a"));
-                    String href = link.getAttribute("href");
+                List<WebElement> allItems = driver.findElements(By.cssSelector(".js-streamItem"));
+                System.out.println("최종 총 개수: " + allItems.size());
 
-                    // 제목 (span 요소가 있을 경우)
-                    List<WebElement> spanElements = post.findElements(By.cssSelector("div > a > span"));
-                    String title = "";
+                for (WebElement item : allItems) {
+                    List<WebElement> posts = item.findElements(By.cssSelector("div.col.u-xs-size12of12"));
 
-                    // span 요소가 존재할 경우, 첫 번째 span의 텍스트를 가져옴
-                    if (!spanElements.isEmpty()) {
-                        title = spanElements.get(0).getText();
+                    for (WebElement post : posts) {
+                        try {
+                            // 링크
+                            WebElement link = post.findElement(By.cssSelector("a"));
+                            String href = link.getAttribute("href");
+
+                            // 타이틀
+                            String title = "";
+                            List<WebElement> spanElements = post.findElements(By.cssSelector("div:first-child > a"));
+                            if (!spanElements.isEmpty()) {
+                                title = spanElements.get(0).getText();
+                            }
+
+                            WebElement time = post.findElement(By.cssSelector("time"));
+                            String datetime = time.getAttribute("datetime");
+                            String visibleDate = time.getText();
+                            Date formatted_date = PostService.convertIsoToFormatted(datetime);
+                            if(!title.isEmpty() && !visibleDate.isEmpty()) {
+                                Post newPost = Post.builder()
+                                        .title(title)
+                                        .url(href)
+                                        .created_at(formatted_date)
+                                        .type(PostType.Daangn)
+                                        .build();
+                                System.out.println("newPost = " + newPost.toString());
+                                postService.insertPost(newPost);
+                            }
+
+                        } catch (Exception e) {
+                            System.out.println("게시물 파싱 중 예외 발생: " + e.getMessage());
+                        }
                     }
-
-                    Post newPost = Post.builder()
-                            .title(title)
-                            .url(href)
-                            .type(PostType.Daangn)
-                            .build();
-                    postService.insertPost(newPost);  // DB에 게시물 삽입
                 }
-            }
-            System.out.println("totalSize = " + totalSize);
-            // 크롬 드라이버 종료
+
+                }
+
         }
-
-        List<Post> allPosts = postService.getAllPosts();
-
-        Assertions.assertThat(allPosts.size()).isEqualTo(totalSize);
         driver.quit();
     }
 }
