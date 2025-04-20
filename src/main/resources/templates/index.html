@@ -36,6 +36,11 @@
       position: sticky;
       top: 80px;
     }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
@@ -58,8 +63,10 @@
     <div class="col-md-9" th:each="post : ${posts}">
       <!-- 블로그 항목 -->
       <div class="border-bottom py-3 blog-row">
-        <div class="blog-title"><span th:text="${post.title}"></span></div>
-        <div class="blog-meta">🥕 <span th:text="${post.created_at}"></span></div>
+        <a th:href="${post.url}">
+          <div class="blog-title"><span th:text="${post.title}"></span></div>
+          <div class="blog-meta">🥕 <span th:text="${post.created_at}"></span></div>
+        </a>
       </div>
     </div>
 

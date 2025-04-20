@@ -4,8 +4,10 @@ import com.tech.blog.domain.Post;
 import com.tech.blog.domain.PostType;
 import com.tech.blog.service.PostService;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -19,16 +21,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.tech.blog.service.PostService.getCurrentDate;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 class CrawlingRestControllerTest {
 
     @Autowired
     private PostService postService;  // @Autowired로 주입
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+    @BeforeAll
+    public void setUp() {
+        postService.deleteAllPost(); // 이제 접근 가능!
+    }
 
     @Test
     @DisplayName("당근 마켓 크롤링 테스트")
@@ -125,9 +136,61 @@ class CrawlingRestControllerTest {
                     }
                 }
 
-                }
+            }
 
         }
+        driver.quit();
+    }
+
+    @Test
+    @DisplayName("토스 크롤링 테스트")
+    public void 토스_크롤링_테스트() throws Exception {
+        // WebDriver 설정 (Chrome 예시)
+        WebDriver driver = new ChromeDriver();
+        String toss_url = "https://toss.tech/?page=";
+        int totalSize = 0;
+        List<Post> allPosts = postService.getAllPosts();
+
+        for (int i = 1; i < 1000; i++) {
+            driver.get(toss_url+i);
+
+            if(driver.getCurrentUrl().contains("error")){
+                break;
+            }
+
+
+            WebElement element = driver.findElement(By.className("e143n5sn1"));
+            List<WebElement> items = element.findElements(By.tagName("li"));
+            for (WebElement item : items) {
+                WebElement link = item.findElement(By.cssSelector("a"));
+                String href = link.getAttribute("href");
+
+                WebElement span_title = item.findElement(By.cssSelector("a > div > span:first-child"));
+                String title = span_title.getText();
+
+                WebElement span_time = item.findElement(By.cssSelector("a > div > span:last-child"));
+                String time = span_time.getText().split("·")[0].strip();
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                Date collected_at = getCurrentDate();
+                Date formatted_date = PostService.convertTossFormattedToIso(time);
+                if(!title.isEmpty() && !time.isEmpty()) {
+                    Post newPost = Post.builder()
+                            .title(title)
+                            .url(href)
+                            .created_at(formatted_date)
+                            .collected_at(collected_at)
+                            .type(PostType.Toss)
+                            .build();
+                    System.out.println("newPost = " + newPost.toString());
+                    postService.insertPost(newPost);
+                    totalSize += 1;
+                }
+            }
+        }
+
+        List<Post> postByType = postService.getPostByType(PostType.Toss);
+        Assertions.assertThat(postByType.size()).isEqualTo(totalSize);
         driver.quit();
     }
 }
