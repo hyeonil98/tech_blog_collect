@@ -58,27 +58,69 @@
 <!-- 메인 콘텐츠 -->
 <div class="container">
   <div class="row">
-
-    <!-- 블로그 리스트 (좌측) -->
-    <div class="col-md-9" th:each="post : ${posts}">
-      <!-- 블로그 항목 -->
-      <div class="border-bottom py-3 blog-row">
-        <a th:href="${post.url}">
-          <div class="blog-title"><span th:text="${post.title}"></span></div>
-          <div class="blog-meta">🥕 <span th:text="${post.created_at}"></span></div>
-        </a>
+    <div class="col-md-9">
+      <!-- 블로그 리스트 (좌측) -->
+      <div th:each="post : ${posts}">
+        <!-- 블로그 항목 -->
+        <div class="border-bottom py-3 blog-row">
+          <a th:href="${post.url}">
+            <div class="blog-title"><span th:text="${post.title}"></span></div>
+            <div class="blog-meta">
+              <span th:switch="${post.type.name()}">
+                <span th:case="'Daangn'">🥕</span>
+                <span th:case="'Toss'">💎</span>
+                <span th:case="'질문'">❓</span>
+                <span th:case="'정보'">💡</span>
+              </span>
+              <span th:text="${post.created_at}"></span>
+            </div>
+          </a>
+        </div>
       </div>
+
+      <!-- 페이지네이션 -->
+      <nav class="mt-4 d-flex justify-content-center">
+        <ul class="pagination">
+          <!-- 처음으로 -->
+          <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+            <a class="page-link" th:href="@{/?(page=0)}">처음</a>
+          </li>
+
+          <!-- 이전 그룹 -->
+          <li class="page-item" th:if="${hasPrevGroup}">
+            <a class="page-link" th:href="@{/?(page=${pageNumbers[0] - 1})}">이전</a>
+          </li>
+          <li class="page-item disabled" th:if="${!hasPrevGroup}">
+            <a class="page-link">이전</a>
+          </li>
+
+          <!-- 페이지 번호 출력 -->
+          <li class="page-item"
+              th:each="pageNum : ${pageNumbers}"
+              th:classappend="${pageNum == currentPage} ? 'active'">
+            <a class="page-link" th:href="@{/?(page=${pageNum})}"
+               th:text="${pageNum + 1}">1</a>
+          </li>
+
+          <!-- 다음 그룹 -->
+          <li class="page-item" th:if="${hasNextGroup}">
+            <a class="page-link" th:href="@{/?(page=${pageNumbers[pageNumbers.size() - 1] + 1})}">다음</a>
+          </li>
+          <li class="page-item disabled" th:if="${!hasNextGroup}">
+            <a class="page-link">다음</a>
+          </li>
+
+          <!-- 마지막으로 -->
+          <li class="page-item" th:classappend="${posts.last} ? 'disabled'">
+            <a class="page-link" th:href="@{/?(page=${posts.totalPages - 1})}">마지막</a>
+          </li>
+
+        </ul>
+      </nav>
+
     </div>
 
-    <!-- 페이지네이션 -->
-    <nav class="mt-4 d-flex justify-content-center">
-      <ul class="pagination">
-        <li class="page-item disabled"><a class="page-link">이전</a></li>
-        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">다음</a></li>
-      </ul>
-    </nav>
+
 
     <!-- 출처 버튼 모음 (우측) -->
     <div class="col-md-3">
@@ -91,7 +133,7 @@
         <a href="#" class="btn btn-dark source-button">🟡 카카오</a>
       </div>
     </div>
-
+  </div>
   </div>
 </div>
 

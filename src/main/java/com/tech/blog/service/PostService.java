@@ -4,7 +4,10 @@ import com.tech.blog.controller.PostController;
 import com.tech.blog.domain.Post;
 import com.tech.blog.domain.PostType;
 import com.tech.blog.repository.PostRepository;
+import com.tech.blog.repository.PostRepositoryImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -21,7 +24,7 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class PostService {
-    private final PostRepository postRepository;
+    private final PostRepositoryImpl postRepository;
 
     public static Date getCurrentDate() {
         LocalDateTime now = LocalDateTime.now();
@@ -61,6 +64,10 @@ public class PostService {
 
     public List<Post> getPostByType(PostType postType) {
         return postRepository.getPostByType(postType);
+    }
+
+    public Page<Post> getPostByPaging(Pageable pageable) {
+        return postRepository.getPostByPaging(pageable);
     }
 
 

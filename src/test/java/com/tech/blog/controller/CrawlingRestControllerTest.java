@@ -17,6 +17,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -39,6 +42,13 @@ class CrawlingRestControllerTest {
     @BeforeAll
     public void setUp() {
         postService.deleteAllPost(); // 이제 접근 가능!
+    }
+
+    @Test
+    @DisplayName("페이징 테스트")
+    public void 페이징_테스트() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
     }
 
     @Test
