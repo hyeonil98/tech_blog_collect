@@ -68,9 +68,10 @@
             <div class="blog-meta">
               <span th:switch="${post.type.name()}">
                 <span th:case="'Daangn'">🥕</span>
-                <span th:case="'Toss'">💎</span>
-                <span th:case="'질문'">❓</span>
-                <span th:case="'정보'">💡</span>
+                <span th:case="'Toss'">📘</span>
+                <span th:case="'Kakao'">☁️</span>
+                <span th:case="'BaeMin'">🟢</span>
+                <span th:case="'Line'">🟡</span>
               </span>
               <span th:text="${post.created_at}"></span>
             </div>
@@ -127,10 +128,10 @@
       <div class="sticky-sidebar">
         <h6 class="fw-bold mb-3">🔍 출처별 보기</h6>
         <a href="#" class="btn btn-warning source-button">🥕 당근마켓</a>
-        <a href="#" class="btn btn-info text-white source-button">📘 데브션</a>
-        <a href="#" class="btn btn-secondary source-button">☁️ 베스핀글로벌</a>
-        <a href="#" class="btn btn-success source-button">🟢 네이버</a>
-        <a href="#" class="btn btn-dark source-button">🟡 카카오</a>
+        <a href="#" class="btn btn-info text-white source-button">📘 토스</a>
+        <a href="#" class="btn btn-secondary source-button">☁️ 카카오</a>
+        <a href="#" class="btn btn-success source-button">🟢 배달의민족</a>
+        <a href="#" class="btn btn-dark source-button">🟡 라인</a>
       </div>
     </div>
   </div>

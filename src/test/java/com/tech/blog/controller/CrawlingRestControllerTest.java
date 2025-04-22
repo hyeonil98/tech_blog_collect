@@ -22,8 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -128,12 +127,14 @@ class CrawlingRestControllerTest {
                             WebElement time = post.findElement(By.cssSelector("time"));
                             String datetime = time.getAttribute("datetime");
                             String visibleDate = time.getText();
+                            Date collected_at = getCurrentDate();
                             Date formatted_date = PostService.convertIsoToFormatted(datetime);
                             if(!title.isEmpty() && !visibleDate.isEmpty()) {
                                 Post newPost = Post.builder()
                                         .title(title)
                                         .url(href)
                                         .created_at(formatted_date)
+                                        .collected_at(collected_at)
                                         .type(PostType.Daangn)
                                         .build();
                                 System.out.println("newPost = " + newPost.toString());
@@ -145,7 +146,6 @@ class CrawlingRestControllerTest {
                         }
                     }
                 }
-
             }
 
         }
@@ -200,6 +200,169 @@ class CrawlingRestControllerTest {
         }
 
         List<Post> postByType = postService.getPostByType(PostType.Toss);
+        Assertions.assertThat(postByType.size()).isEqualTo(totalSize);
+        driver.quit();
+    }
+
+    @Test
+    @DisplayName("카카오 크롤링 테스트")
+    public void 카카오_크롤링_테스트() throws Exception {
+        // WebDriver 설정 (Chrome 예시)
+        WebDriver driver = new ChromeDriver();
+        String kakao_url = "https://tech.kakao.com";
+        int totalSize = 0;
+        List<Post> allPosts = postService.getAllPosts();
+        driver.get(kakao_url+"/blog");
+
+        for (int i = 1; i <= 30; i++) {
+            if(driver.getCurrentUrl().contains("error")) {
+                break;
+            }
+
+            Thread.sleep(2000);
+            WebElement element = driver.findElement(By.className("list_post"));
+            List<WebElement> items = element.findElements(By.tagName("li"));
+            for (WebElement item : items) {
+                WebElement link = item.findElement(By.tagName("a"));
+                String href = link.getAttribute("href");
+
+                String title = item.findElement(By.tagName("h4")).getText();
+
+                WebElement span_time = item.findElement(By.className("txt_date"));
+                String time = span_time.getText();
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                Date collected_at = getCurrentDate();
+                Date formatted_date = PostService.convertKakaoFormattedToIso(time);
+                if(!title.isEmpty() && !time.isEmpty()) {
+                    Post newPost = Post.builder()
+                            .title(title)
+                            .url(href)
+                            .created_at(formatted_date)
+                            .collected_at(collected_at)
+                            .type(PostType.Kakao)
+                            .build();
+                    postService.insertPost(newPost);
+                    totalSize += 1;
+                }
+            }
+            WebElement webElement = driver.findElement(By.className("btn_next"));
+            webElement.click();
+        }
+
+        List<Post> postByType = postService.getPostByType(PostType.Kakao);
+        Assertions.assertThat(postByType.size()).isEqualTo(totalSize);
+        driver.quit();
+    }
+
+    @Test
+    @DisplayName("배민 크롤링 테스트")
+    public void 배민_크롤링_테스트() throws Exception {
+        // WebDriver 설정 (Chrome 예시)
+        WebDriver driver = new ChromeDriver();
+        String woowahan_url = "https://techblog.woowahan.com/?paged=";
+        int totalSize = 0;
+        List<Post> allPosts = postService.getAllPosts();
+
+        for (int i = 1; i <= 46; i++) {
+            driver.get(woowahan_url+i);
+            if(driver.getCurrentUrl().contains("error")) {
+                break;
+            }
+
+            Thread.sleep(2000);
+            WebElement element = driver.findElement(By.className("post-list"));
+            List<WebElement> items = element.findElements(By.tagName("div"));
+            for (WebElement item : items) {
+                WebElement link = item.findElement(By.tagName("a"));
+                String href = link.getAttribute("href");
+
+                WebElement titleBox = item.findElement(By.cssSelector("h2.post-title"));
+                String title = titleBox.getAttribute("textContent").strip();
+
+                WebElement timeElement = item.findElement(By.cssSelector("time.post-author-date"));
+                String time = timeElement.getAttribute("textContent").strip();
+
+//                // CSS 선택자 사용 (정상)
+//                WebElement titleBox = item.findElement(By.cssSelector("a > h2"));
+//                String title = titleBox.getText().strip();
+//
+//                WebElement timeElement = item.findElement(By.cssSelector("p > time"));
+//                String time = timeElement.getText().strip();
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                Date collected_at = getCurrentDate();
+                Date formatted_date = PostService.convertWoohanFormattedToIso(time);
+                if(!title.isEmpty() && !time.isEmpty()) {
+                    Post newPost = Post.builder()
+                            .title(title)
+                            .url(href)
+                            .created_at(formatted_date)
+                            .collected_at(collected_at)
+                            .type(PostType.BaeMin)
+                            .build();
+                    postService.insertPost(newPost);
+                    totalSize += 1;
+                }
+            }
+        }
+
+        List<Post> postByType = postService.getPostByType(PostType.BaeMin);
+        Assertions.assertThat(postByType.size()).isEqualTo(totalSize);
+        driver.quit();
+    }
+
+    @Test
+    @DisplayName("라인 크롤링 테스트")
+    public void 라인_크롤링_테스트() throws Exception {
+        // WebDriver 설정 (Chrome 예시)
+        WebDriver driver = new ChromeDriver();
+        String line_url = "https://engineering.linecorp.com/ko/blog";
+        int totalSize = 0;
+        List<Post> allPosts = postService.getAllPosts();
+
+        for (int i = 1; i <= 46; i++) {
+            if(i == 1){
+                driver.get(line_url);
+            }else{
+                driver.get(line_url+"/page/"+i);
+            }
+            if(driver.getCurrentUrl().contains("error")) {
+                break;
+            }
+
+            Thread.sleep(2000);
+            WebElement element = driver.findElement(By.className("post_list"));
+            List<WebElement> items = element.findElements(By.cssSelector("li.post_list_item"));
+            for (WebElement item : items) {
+                WebElement titleElement = item.findElement(By.cssSelector("h2.title > a"));
+                String title = titleElement.getText().strip();
+                String href = titleElement.getAttribute("href");
+
+                WebElement timeElement = item.findElement(By.cssSelector("div.text_area > span.text_date"));
+                String time = timeElement.getText().strip();
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                Date collected_at = getCurrentDate();
+                LocalDate date = LocalDate.parse(time, formatter);
+                LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
+                Date created_at = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+                if(!title.isEmpty() && !time.isEmpty()) {
+                    Post newPost = Post.builder()
+                            .title(title)
+                            .url(href)
+                            .created_at(created_at)
+                            .collected_at(collected_at)
+                            .type(PostType.Line)
+                            .build();
+                    postService.insertPost(newPost);
+                    totalSize += 1;
+                }
+            }
+        }
+
+        List<Post> postByType = postService.getPostByType(PostType.Line);
         Assertions.assertThat(postByType.size()).isEqualTo(totalSize);
         driver.quit();
     }

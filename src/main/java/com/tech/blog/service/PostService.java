@@ -5,6 +5,7 @@ import com.tech.blog.domain.Post;
 import com.tech.blog.domain.PostType;
 import com.tech.blog.repository.PostRepository;
 import com.tech.blog.repository.PostRepositoryImpl;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,6 +59,21 @@ public class PostService {
         return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
+    public static Date convertKakaoFormattedToIso(String isoDateString) throws ParseException {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+        LocalDate date = LocalDate.parse(isoDateString, inputFormatter);
+        LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
+        return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static Date convertWoohanFormattedToIso(String isoDateString) throws ParseException {
+//        isoDateString = isoDateString.replace(".", " ");
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("MMM.dd.yyyy", Locale.ENGLISH);
+        LocalDate date = LocalDate.parse(isoDateString, inputFormatter);
+        LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
+        return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
     public List<Post> getAllPosts() {
         return postRepository.getAllPosts();
     }
@@ -70,15 +86,16 @@ public class PostService {
         return postRepository.getPostByPaging(pageable);
     }
 
-
+    @Transactional
     public void insertPost(Post post) {
         postRepository.insertPost(post);
     }
 
+    @Transactional
     public void deleteAllPost() {
         postRepository.deleteAllPost();
     }
-
+    @Transactional
     public void deletePostByType(PostType postType) {
         postRepository.deletePostByType(postType);
     }

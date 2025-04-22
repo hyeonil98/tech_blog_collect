@@ -11,6 +11,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "tb_post")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

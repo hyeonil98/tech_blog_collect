@@ -13,20 +13,20 @@ import java.util.List;
 import static com.tech.blog.domain.QPost.post;
 
 public interface PostRepositoryImpl {
-    public List<Post> getAllPosts();
+    List<Post> getAllPosts();
 
 
-    public List<Post> getPostByType(PostType postType);
+    List<Post> getPostByType(PostType postType);
 
-    public Page<Post> getPostByPaging(Pageable pageable);
+    Page<Post> getPostByPaging(Pageable pageable);
 
 
     @Transactional
-    public void insertPost(Post post);
+    void insertPost(Post post);
 
     @Transactional
-    public void deleteAllPost();
+    void deleteAllPost();
 
     @Transactional
-    public void deletePostByType(PostType postType);
+    void deletePostByType(PostType postType);
 }
