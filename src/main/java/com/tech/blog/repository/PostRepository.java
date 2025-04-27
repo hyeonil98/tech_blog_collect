@@ -38,9 +38,13 @@ public class PostRepository implements PostRepositoryImpl{
                 .fetch();
     }
 
-    public Page<Post> getPostByPaging(Pageable pageable) {
+    public Page<Post> getPostByPaging(Pageable pageable, PostType postType, String keyword) {
         List<Post> content = queryFactory
                 .selectFrom(post)
+                .where(
+                        postType != PostType.ALL ? post.type.eq(postType) : null,
+                        post.title.like("%" + keyword + "%")
+                )
                 .orderBy(postSort(pageable))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -48,7 +52,11 @@ public class PostRepository implements PostRepositoryImpl{
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(post.count())
-                .from(post);
+                .from(post)
+                .where(
+                        postType != PostType.ALL ? post.type.eq(postType) : null,
+                        post.title.like("%" + keyword + "%")
+                );
 
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);

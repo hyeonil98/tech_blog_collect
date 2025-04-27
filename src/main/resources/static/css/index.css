@@ -1,0 +1,60 @@
+@font-face {
+    font-family: 'LINESeedKR-Bd';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+body {
+    font-family: 'LINESeedKR-Bd';
+}
+
+.blog-title {
+    font-weight: 500;
+}
+.blog-meta {
+    font-size: 0.9rem;
+    color: #777;
+}
+.blog-row:hover {
+    background-color: #f8f9fa;
+    transition: 0.2s ease;
+}
+.source-button {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.sticky-sidebar {
+    position: sticky;
+    top: 80px;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.btn-daangn {
+    background-color: #FF6F0F;
+    color: white;
+}
+
+.btn-toss {
+    background-color: #3182F6;
+    color: white;
+}
+
+.btn-kakao {
+    background-color: #FEE500;
+    color: #000;
+}
+
+.btn-baemin {
+    background-color: #00C7AE;
+    color: white;
+}
+
+.btn-line {
+    background-color: #00B900;
+    color: white;
+}

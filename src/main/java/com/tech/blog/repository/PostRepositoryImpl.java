@@ -18,7 +18,7 @@ public interface PostRepositoryImpl {
 
     List<Post> getPostByType(PostType postType);
 
-    Page<Post> getPostByPaging(Pageable pageable);
+    Page<Post> getPostByPaging(Pageable pageable, PostType postType, String keyword);
 
 
     @Transactional

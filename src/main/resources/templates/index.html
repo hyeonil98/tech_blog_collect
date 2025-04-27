@@ -5,43 +5,8 @@
   <title>기술 블로그 모음</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    @font-face {
-      font-family: 'LINESeedKR-Bd';
-      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/LINESeedKR-Bd.woff2') format('woff2');
-      font-weight: 700;
-      font-style: normal;
-    }
-
-    body {
-      font-family: 'LINESeedKR-Bd';
-    }
-
-    .blog-title {
-      font-weight: 500;
-    }
-    .blog-meta {
-      font-size: 0.9rem;
-      color: #777;
-    }
-    .blog-row:hover {
-      background-color: #f8f9fa;
-      transition: 0.2s ease;
-    }
-    .source-button {
-      width: 100%;
-      margin-bottom: 10px;
-    }
-    .sticky-sidebar {
-      position: sticky;
-      top: 80px;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-  </style>
+  <link rel="stylesheet" href="css/index.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -57,6 +22,43 @@
 
 <!-- 메인 콘텐츠 -->
 <div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- 선택된 필터 타입 보여주기 -->
+    <div class="selected-type">
+        <span th:switch="${type}">
+            <span th:case="'Daangn'">
+              <span class="badge" style="background-color:#FF6F0F; color: white;">현재 선택: 당근마켓</span>
+            </span>
+
+            <span th:case="'Toss'">
+              <span class="badge" style="background-color:#3182F6; color: white;">현재 선택: 토스</span>
+            </span>
+
+            <span th:case="'Kakao'">
+              <span class="badge" style="background-color:#FEE500; color: black;">현재 선택: 카카오</span>
+            </span>
+
+            <span th:case="'BaeMin'">
+              <span class="badge" style="background-color:#00C7AE; color: white;">현재 선택: 배달의민족</span>
+            </span>
+
+            <span th:case="'Line'">
+              <span class="badge" style="background-color:#00B900; color: white;">현재 선택: 라인</span>
+            </span>
+
+           <span th:case="'ALL'">
+              <span class="badge" style="background-color:#777777; color: white;">현재 선택: 전체</span>
+            </span>
+        </span>
+      <input type="hidden" id="select_type">
+    </div>
+
+    <!-- 검색창 -->
+    <div class="search-box">
+      <input type="text" class="form-control" placeholder="블로그 제목 검색..." id="searchInput">
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-md-9">
       <!-- 블로그 리스트 (좌측) -->
@@ -67,13 +69,31 @@
             <div class="blog-title"><span th:text="${post.title}"></span></div>
             <div class="blog-meta">
               <span th:switch="${post.type.name()}">
-                <span th:case="'Daangn'">🥕</span>
-                <span th:case="'Toss'">📘</span>
-                <span th:case="'Kakao'">☁️</span>
-                <span th:case="'BaeMin'">🟢</span>
-                <span th:case="'Line'">🟡</span>
+                <span th:case="'Daangn'">
+                  <span class="badge" style="background-color:#FF6F0F; color: white;">당근마켓</span>
+                </span>
+
+                <span th:case="'Toss'">
+                  <span class="badge" style="background-color:#3182F6; color: white;">토스</span>
+                </span>
+
+                <span th:case="'Kakao'">
+                  <span class="badge" style="background-color:#FEE500; color: black;">카카오</span>
+                </span>
+
+                <span th:case="'BaeMin'">
+                  <span class="badge" style="background-color:#00C7AE; color: white;">배달의민족</span>
+                </span>
+
+                <span th:case="'Line'">
+                  <span class="badge" style="background-color:#00B900; color: white;">라인</span>
+                </span>
+
+                <span th:case="'*'">
+                  <span class="badge" style="background-color:#777777; color: white;">전체</span>
+                </span>
               </span>
-              <span th:text="${post.created_at}"></span>
+              <span th:text="${#dates.format(post.created_at, 'yyyy-MM-dd')}"></span>
             </div>
           </a>
         </div>
@@ -84,12 +104,14 @@
         <ul class="pagination">
           <!-- 처음으로 -->
           <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-            <a class="page-link" th:href="@{/?(page=0)}">처음</a>
+            <a class="page-link" th:href="|javascript:movePage('0')|">처음</a>
+
           </li>
 
           <!-- 이전 그룹 -->
+
           <li class="page-item" th:if="${hasPrevGroup}">
-            <a class="page-link" th:href="@{/?(page=${pageNumbers[0] - 1})}">이전</a>
+            <a class="page-link" th:href="|javascript:movePage('${pageNumbers[0] - 1}')|">이전</a>
           </li>
           <li class="page-item disabled" th:if="${!hasPrevGroup}">
             <a class="page-link">이전</a>
@@ -99,13 +121,13 @@
           <li class="page-item"
               th:each="pageNum : ${pageNumbers}"
               th:classappend="${pageNum == currentPage} ? 'active'">
-            <a class="page-link" th:href="@{/?(page=${pageNum})}"
+            <a class="page-link" th:href="|javascript:movePage('${pageNum}')|"
                th:text="${pageNum + 1}">1</a>
           </li>
 
           <!-- 다음 그룹 -->
           <li class="page-item" th:if="${hasNextGroup}">
-            <a class="page-link" th:href="@{/?(page=${pageNumbers[pageNumbers.size() - 1] + 1})}">다음</a>
+            <a class="page-link" th:href="|javascript:movePage('${pageNumbers[pageNumbers.size() - 1] + 1}')|">다음</a>
           </li>
           <li class="page-item disabled" th:if="${!hasNextGroup}">
             <a class="page-link">다음</a>
@@ -113,7 +135,7 @@
 
           <!-- 마지막으로 -->
           <li class="page-item" th:classappend="${posts.last} ? 'disabled'">
-            <a class="page-link" th:href="@{/?(page=${posts.totalPages - 1})}">마지막</a>
+            <a class="page-link" th:href="|javascript:movePage('${posts.totalPages - 1}')|">마지막</a>
           </li>
 
         </ul>
@@ -127,17 +149,23 @@
     <div class="col-md-3">
       <div class="sticky-sidebar">
         <h6 class="fw-bold mb-3">🔍 출처별 보기</h6>
-        <a href="#" class="btn btn-warning source-button">🥕 당근마켓</a>
-        <a href="#" class="btn btn-info text-white source-button">📘 토스</a>
-        <a href="#" class="btn btn-secondary source-button">☁️ 카카오</a>
-        <a href="#" class="btn btn-success source-button">🟢 배달의민족</a>
-        <a href="#" class="btn btn-dark source-button">🟡 라인</a>
+        <button th:onclick="search('ALL')" class="btn btn-secondary source-button">전체</button>
+        <button th:onclick="search('Daangn')" class="btn btn-daangn source-button">🥕 당근마켓</button>
+        <button th:onclick="search('Toss')" class="btn btn-toss source-button">📘 토스</button>
+        <button th:onclick="search('Kakao')" class="btn btn-kakao source-button">☁️ 카카오</button>
+        <button th:onclick="search('BaeMin')" class="btn btn-baemin source-button">🟢 배달의민족</button>
+        <button th:onclick="search('Line')" class="btn btn-line source-button">🟡 라인</button>
       </div>
     </div>
   </div>
-  </div>
+  <form id="search_form" style="display: none;" th:action="@{/}">
+    <input type="hidden" id="search_page" name="page" th:value="${page} == null ? 1 : ${page}">
+    <input type="hidden" id="search_type" name="type" th:value="${type} == null ? 'ALL' : ${type}">
+    <input type="hidden" id="search_keyword" name="keyword" th:value="${keyword} == null ? '' : ${keyword}">
+  </form>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/index.js"></script>
 </body>
 </html>

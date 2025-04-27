@@ -82,8 +82,8 @@ public class PostService {
         return postRepository.getPostByType(postType);
     }
 
-    public Page<Post> getPostByPaging(Pageable pageable) {
-        return postRepository.getPostByPaging(pageable);
+    public Page<Post> getPostByPaging(Pageable pageable, PostType postType, String keyword) {
+        return postRepository.getPostByPaging(pageable, postType, keyword);
     }
 
     @Transactional
