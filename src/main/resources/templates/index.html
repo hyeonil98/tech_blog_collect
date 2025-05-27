@@ -55,12 +55,19 @@
 
     <!-- 검색창 -->
     <div class="search-box">
-      <input type="text" class="form-control" placeholder="블로그 제목 검색..." id="searchInput">
+      <input type="text" class="form-control" th:value="${keyword}" placeholder="블로그 제목 검색..." id="searchInput">
     </div>
   </div>
 
   <div class="row">
     <div class="col-md-9">
+      <div th:if="${posts.totalElements} == 0">
+        <!-- 결과 없을 때 보여줄 메시지 -->
+        <div class="alert alert-warning text-center" role="alert">
+          검색 결과가 없습니다.
+        </div>
+      </div>
+
       <!-- 블로그 리스트 (좌측) -->
       <div th:each="post : ${posts}">
         <!-- 블로그 항목 -->

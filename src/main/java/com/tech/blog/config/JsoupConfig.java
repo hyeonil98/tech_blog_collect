@@ -1,4 +1,4 @@
-package com.tech.blog.crawling;
+package com.tech.blog.config;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;

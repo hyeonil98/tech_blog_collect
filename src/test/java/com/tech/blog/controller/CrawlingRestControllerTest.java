@@ -138,7 +138,7 @@ class CrawlingRestControllerTest {
                                         .type(PostType.Daangn)
                                         .build();
                                 System.out.println("newPost = " + newPost.toString());
-                                postService.insertPost(newPost);
+                                postService.save(newPost);
                             }
 
                         } catch (Exception e) {
@@ -193,7 +193,7 @@ class CrawlingRestControllerTest {
                             .type(PostType.Toss)
                             .build();
                     System.out.println("newPost = " + newPost.toString());
-                    postService.insertPost(newPost);
+                    postService.save(newPost);
                     totalSize += 1;
                 }
             }
@@ -242,7 +242,7 @@ class CrawlingRestControllerTest {
                             .collected_at(collected_at)
                             .type(PostType.Kakao)
                             .build();
-                    postService.insertPost(newPost);
+                    postService.save(newPost);
                     totalSize += 1;
                 }
             }
@@ -301,7 +301,7 @@ class CrawlingRestControllerTest {
                             .collected_at(collected_at)
                             .type(PostType.BaeMin)
                             .build();
-                    postService.insertPost(newPost);
+                    postService.save(newPost);
                     totalSize += 1;
                 }
             }
@@ -356,7 +356,7 @@ class CrawlingRestControllerTest {
                             .collected_at(collected_at)
                             .type(PostType.Line)
                             .build();
-                    postService.insertPost(newPost);
+                    postService.save(newPost);
                     totalSize += 1;
                 }
             }

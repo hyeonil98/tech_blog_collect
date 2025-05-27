@@ -32,6 +32,7 @@ public class PostController {
     public ModelAndView home(@RequestParam(defaultValue = "0") int page,
                              @RequestParam(defaultValue = "ALL") String type,
                              @RequestParam(defaultValue = "") String keyword){
+
         int pageSize = 10;
         PostType postType = PostType.valueOf(StringUtils.capitalize(type));
         PageRequest pageRequest = PageRequest.of(page, pageSize);

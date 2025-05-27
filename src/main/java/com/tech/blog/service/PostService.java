@@ -1,10 +1,8 @@
 package com.tech.blog.service;
 
-import com.tech.blog.controller.PostController;
 import com.tech.blog.domain.Post;
 import com.tech.blog.domain.PostType;
 import com.tech.blog.repository.PostRepository;
-import com.tech.blog.repository.PostRepositoryImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,13 +17,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
-    private final PostRepositoryImpl postRepository;
+    private final PostRepository postRepository;
 
     public static Date getCurrentDate() {
         LocalDateTime now = LocalDateTime.now();
@@ -86,15 +82,26 @@ public class PostService {
         return postRepository.getPostByPaging(pageable, postType, keyword);
     }
 
+    public boolean existsByTitleAndUrl(String title, String url) {
+        return postRepository.existsByTitleAndUrl(title, url);
+    }
+
     @Transactional
-    public void insertPost(Post post) {
-        postRepository.insertPost(post);
+    public void save(Post post) {
+        postRepository.save(post);
+    }
+
+    @Transactional
+    public void saveAll(List<Post> posts) {
+        List<Post> newPosts = posts.stream().filter(post -> !postRepository.existsByTitleAndUrl(post.getTitle(), post.getUrl())).toList();
+        postRepository.saveAll(newPosts);
     }
 
     @Transactional
     public void deleteAllPost() {
         postRepository.deleteAllPost();
     }
+
     @Transactional
     public void deletePostByType(PostType postType) {
         postRepository.deletePostByType(postType);
