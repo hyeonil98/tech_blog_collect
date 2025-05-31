@@ -17,3 +17,18 @@ $("#searchInput").on("keyup",function(key) {
         search(type, keyword);
     }
 });
+
+$("#startBtn").on("click", function (event) {
+    $("#loading-screen").show();
+
+    $.ajax({
+        url: '/run-batch',
+        method: 'GET',
+        success: function (data) {
+        },
+        error: function () {
+            alert('크롤링에 실패했습니다.');
+        }
+    });
+    $("#loading-screen").hide();
+});

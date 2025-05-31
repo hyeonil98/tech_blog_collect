@@ -1,6 +1,5 @@
 package com.tech.blog.controller;
 
-import com.tech.blog.crawling.carrot.CarrotCrawling;
 import com.tech.blog.domain.Post;
 import com.tech.blog.domain.PostType;
 import com.tech.blog.service.PostService;
@@ -18,12 +17,6 @@ public class CrawlingRestController {
     @Autowired
     private PostService postService;
 
-    @GetMapping(value = "/crawling")
-    public ResponseEntity<String> crawling() throws Exception {
-        CarrotCrawling crawling = new CarrotCrawling();
-        String carrotData = crawling.getCarrotData();
-        return ResponseEntity.ok(carrotData);
-    }
 
     @GetMapping(value = "/v1/posts")
     public Page<Post> searchPost(@RequestParam Pageable pageable,

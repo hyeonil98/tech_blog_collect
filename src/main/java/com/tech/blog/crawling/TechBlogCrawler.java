@@ -6,6 +6,6 @@ import java.text.ParseException;
 import java.util.List;
 
 public interface TechBlogCrawler {
-    List<Post> crawling() throws ParseException;
+    List<Post> crawling() throws ParseException, InterruptedException;
     String getSiteKey();
 }

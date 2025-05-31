@@ -21,9 +21,9 @@ import java.util.List;
 public class BatchJobConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
-    private CrawlingSiteReader crawlingSiteReader;
-    private PostDeduplicationProcessor postDeduplicationProcessor;
-    private PostWriter postWriter;
+    private final CrawlingSiteReader crawlingSiteReader;
+    private final PostDeduplicationProcessor postDeduplicationProcessor;
+    private final PostWriter postWriter;
 
     @Bean
     public Job crawlingJob() {

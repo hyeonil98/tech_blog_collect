@@ -63,8 +63,10 @@ public class PostService {
     }
 
     public static Date convertWoohanFormattedToIso(String isoDateString) throws ParseException {
-//        isoDateString = isoDateString.replace(".", " ");
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("MMM.dd.yyyy", Locale.ENGLISH);
+        isoDateString = isoDateString.trim().replace(" ", "").replaceAll("\\.$", "");
+
+        // 2. 포맷 지정: yyyy.MM.dd
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy.M.d", Locale.ENGLISH);
         LocalDate date = LocalDate.parse(isoDateString, inputFormatter);
         LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
         return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
