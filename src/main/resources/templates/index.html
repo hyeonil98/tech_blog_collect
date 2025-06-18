@@ -157,16 +157,16 @@
 
     <!-- 출처 버튼 모음 (우측) -->
     <div class="col-md-3">
-      <div class="sticky-sidebar">
+      <!-- 출처별 보기 (사이드바) -->
+      <div class="sticky-sidebar d-grid gap-2">
         <h6 class="fw-bold mb-3">🔍 출처별 보기</h6>
-        <button th:onclick="search('ALL')" class="btn btn-secondary source-button">전체</button>
+        <button th:onclick="search('ALL')" class="btn btn-outline-dark source-button">전체</button>
         <button th:onclick="search('Daangn')" class="btn btn-daangn source-button">🥕 당근마켓</button>
         <button th:onclick="search('Toss')" class="btn btn-toss source-button">📘 토스</button>
         <button th:onclick="search('Kakao')" class="btn btn-kakao source-button">☁️ 카카오</button>
         <button th:onclick="search('BaeMin')" class="btn btn-baemin source-button">🟢 배달의민족</button>
         <button th:onclick="search('Line')" class="btn btn-line source-button">🟡 라인</button>
       </div>
-    </div>
   </div>
   <form id="search_form" style="display: none;" th:action="@{/}">
     <input type="hidden" id="search_page" name="page" th:value="${page} == null ? 1 : ${page}">
